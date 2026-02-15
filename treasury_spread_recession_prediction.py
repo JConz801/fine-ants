@@ -14,9 +14,46 @@ import pandas as pd
 from datetime import datetime, timedelta
 from typing import Tuple, Dict, List
 import warnings
+import json
+import os
+from fredapi import Fred
 
 warnings.filterwarnings('ignore')
 
+
+def load_api_key_from_notebook(notebook_path: str = 'key_f.ipynb') -> str:
+    """
+    Load the FRED API key from key_f.ipynb notebook.
+    
+    Args:
+        notebook_path: Path to the notebook file containing the api_key
+        
+    Returns:
+        The API key string
+    """
+    # Get the directory of this script
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    full_path = os.path.join(script_dir, notebook_path)
+    
+    with open(full_path, 'r') as f:
+        notebook = json.load(f)
+    
+    # Extract api_key from the notebook cells
+    for cell in notebook['cells']:
+        if cell['cell_type'] == 'code':
+            source = ''.join(cell['source'])
+            if 'api_key' in source and '=' in source:
+                # Extract the string value between quotes
+                import re
+                match = re.search(r"api_key\s*=\s*['\"]([^'\"]+)['\"]", source)
+                if match:
+                    return match.group(1)
+    
+    raise ValueError(f"Could not find api_key in {notebook_path}")
+
+
+# Load API key from notebook
+api_key = load_api_key_from_notebook()
 
 class TreasurySpreadRecessionPredictor:
     """
@@ -32,27 +69,38 @@ class TreasurySpreadRecessionPredictor:
         self.recession_data = None
         self.analysis_results = {}
     
-    def load_sample_data(self) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    def load_sample_data(self, api_key: str = None) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """
-        Load sample historical data for demonstration.
-        In production, this would use FRED API or similar data source.
+        Load historical data from FRED API.
         
+        Args:
+            api_key: FRED API key. If None, uses module-level api_key variable.
+            
         Returns:
             Tuple of (spread_df, recession_df)
         """
-        # Sample data structure - in production use real data from FRED
-        dates = pd.date_range(start='2000-01-01', end='2025-12-31', freq='M')
+        # Get API key from parameter or use module-level default
+        if api_key is None:
+            api_key = globals()['api_key']
         
-        # Simulate spread data (10Y-2Y spread in basis points)
-        np.random.seed(42)
-        spread_values = np.cumsum(np.random.randn(len(dates)) * 5) + 150
+        # Initialize FRED API
+        fred = Fred(api_key=api_key)
+        
+        # Fetch 10Y-2Y spread data (T10Y2Y series)
+        print("Fetching Treasury spread data from FRED...")
+        spread_series = fred.get_series('T10Y2Y', observation_start='1980-01-01')
+        
         spread_df = pd.DataFrame({
-            'date': dates,
-            'spread_bps': spread_values
+            'date': spread_series.index,
+            'spread_bps': spread_series.values * 100  # Convert from percentage to basis points
         })
+        spread_df = spread_df.reset_index(drop=True)
         
         # Define historical recession periods (NBER official dates)
         recession_periods = [
+            ('1980-01-01', '1980-07-01'),   # 1980 Recession
+            ('1981-07-01', '1982-11-01'),   # Early 1980s Recession
+            ('1990-07-01', '1991-03-01'),   # 1990-1991 Recession
             ('2001-03-01', '2001-11-01'),   # 2001 Recession
             ('2007-12-01', '2009-06-01'),   # 2008-2009 Financial Crisis
             ('2020-02-01', '2020-04-01'),   # COVID-19 Recession
@@ -67,6 +115,9 @@ class TreasurySpreadRecessionPredictor:
             })
         
         recession_df = pd.DataFrame(recession_list)
+        
+        print(f"Loaded {len(spread_df)} months of Treasury spread data")
+        print(f"Data range: {spread_df['date'].min().date()} to {spread_df['date'].max().date()}")
         
         return spread_df, recession_df
     
@@ -226,15 +277,18 @@ class TreasurySpreadRecessionPredictor:
         
         return metrics
     
-    def run_analysis(self) -> Dict:
+    def run_analysis(self, api_key: str = None) -> Dict:
         """
         Execute the full recession prediction analysis.
+        
+        Args:
+            api_key: FRED API key. If None, uses FRED_API_KEY environment variable.
         
         Returns:
             Dictionary with complete analysis results
         """
         # Load data
-        spread_df, recession_df = self.load_sample_data()
+        spread_df, recession_df = self.load_sample_data(api_key=api_key)
         self.spread_data = spread_df
         self.recession_data = recession_df
         
@@ -299,7 +353,7 @@ class TreasurySpreadRecessionPredictor:
 
 def main():
     """Main execution function."""
-    print("Initializing Treasury Spread Recession Prediction Analysis...")
+    print("Initializing Treasury Spread Recession Prediction Analysis...\n")
     
     predictor = TreasurySpreadRecessionPredictor()
     results = predictor.run_analysis()
