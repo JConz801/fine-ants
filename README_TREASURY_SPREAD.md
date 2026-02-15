@@ -131,7 +131,7 @@ python treasury_spread_recession_prediction.py [options]
 
 | Argument | Description | Default |
 |----------|-------------|---------|
-| `--start-date` | Start date for analysis (YYYY-MM-DD) | 10 years ago |
+| `--start-date` | Start date for analysis (YYYY-MM-DD) | 1980 |
 | `--end-date` | End date for analysis (YYYY-MM-DD) | Today |
 | `--long-term` | Long-term Treasury maturity in years | 10 |
 | `--short-term` | Short-term Treasury maturity in years | 2 |
@@ -180,10 +180,11 @@ This analyzes the period around the COVID-19 pandemic and subsequent recovery.
 ```bash
 python treasury_spread_recession_prediction.py \
   --start-date 1980-01-01 \
+  --end-date 2024-12-31 \
   --output-dir ./historical_analysis
 ```
 
-This provides a comprehensive look at the 21st century, including multiple recession cycles.
+This provides a comprehensive look at the late 20th (since 1980) and 21st century, including multiple recession cycles.
 
 ### Scenario 3: Custom Spread Configuration
 
