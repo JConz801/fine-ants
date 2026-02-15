@@ -91,8 +91,7 @@ pip install pandas>=1.3.0
 pip install numpy>=1.20.0
 
 # Data sources
-pip install yfinance>=0.1.70
-pip install pandas_datareader>=0.10.0
+pip install fredapi
 
 # Visualization
 pip install matplotlib>=3.4.0
