@@ -80,7 +80,7 @@ The Treasury yield curve represents the interest rates on U.S. government bonds 
 The script requires the following Python packages:
 
 ```bash
-pip install pandas numpy matplotlib seaborn yfinance pandas_datareader scikit-learn
+pip install pandas numpy matplotlib seaborn fredapi scikit-learn
 ```
 
 ### Individual Package Installation
@@ -116,7 +116,7 @@ pip install -r requirements.txt
 
 3. Verify installation:
 ```bash
-python -c "import pandas, yfinance, matplotlib; print('All dependencies installed successfully')"
+python -c "import pandas, matplotlib; print('All dependencies installed successfully')"
 ```
 
 ## Usage
@@ -168,7 +168,7 @@ python treasury_spread_recession_prediction.py --output-dir ./analysis_results
 
 ```bash
 python treasury_spread_recession_prediction.py \
-  --start-date 2019-01-01 \
+  --start-date 1980-01-01 \
   --end-date 2024-12-31 \
   --verbose True
 ```
@@ -179,7 +179,7 @@ This analyzes the period around the COVID-19 pandemic and subsequent recovery.
 
 ```bash
 python treasury_spread_recession_prediction.py \
-  --start-date 2000-01-01 \
+  --start-date 1980-01-01 \
   --output-dir ./historical_analysis
 ```
 
@@ -448,6 +448,6 @@ This tool is provided for educational and informational purposes only. It should
 
 ---
 
-**Last Updated**: January 5, 2026
+**Last Updated**: February 15, 2026
 **Maintained By**: JConz801
 **Repository**: https://github.com/JConz801/fine-ants
