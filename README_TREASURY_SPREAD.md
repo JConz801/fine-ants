@@ -427,8 +427,7 @@ Lead Time = Days_from_Inversion_to_Recession_Start / 30
 
 ### Data Sources
 
-- **yfinance**: Yahoo Finance data retrieval
-- **pandas_datareader**: FRED and other sources
+- **fredapi**: FRED and other sources
 - **NBER**: Official recession dates
 
 ## Contributing
@@ -437,7 +436,7 @@ Contributions are welcome! Please feel free to:
 - Report issues
 - Suggest improvements
 - Submit pull requests
-- Improve documentation
+- Improve documentation 
 
 ## License
 
