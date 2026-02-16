@@ -154,7 +154,7 @@ python treasury_spread_recession_prediction.py --start-date 2015-01-01 --end-dat
 
 #### Different Treasury Spreads
 ```bash
-python treasury_spread_recession_prediction.py --long-term 10 --short-term 3
+python treasury_spread_recession_prediction.py --long-term 10 --short-term 2
 ```
 
 #### Specify Output Directory
@@ -168,7 +168,7 @@ python treasury_spread_recession_prediction.py --output-dir ./analysis_results
 
 ```bash
 python treasury_spread_recession_prediction.py \
-  --start-date 1980-01-01 \
+  --start-date 2020-01-01 \
   --end-date 2024-12-31 \
   --verbose True
 ```
@@ -349,7 +349,7 @@ Lead Time = Days_from_Inversion_to_Recession_Start / 30
 
 ### Algorithm Components
 
-1. **Data Retrieval**: Uses `yfinance` and `pandas_datareader`
+1. **Data Retrieval**: Uses 'Fred'
 2. **Data Cleaning**: Handles missing values and outliers
 3. **Statistical Analysis**: Uses scikit-learn for metrics
 4. **Visualization**: Uses matplotlib and seaborn
